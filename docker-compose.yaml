@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:15
+    container_name: redmane-db
+    restart: always
+    environment:
+      POSTGRES_DB: readmedatabase
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./REDMANE_fastapi/data/REDMANE_fastapi_public_data:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - redmane-network
+
+  backend:
+    build:
+      context: ./ 
+      dockerfile: ./redmane_fastapi.dockerfile
+    ports:
+      - "8888:8888"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/readmedatabase
+    depends_on:
+      - db
+    networks:
+      - redmane-network
+
+  frontend:
+    build:
+      context: ./ 
+      dockerfile: ./redmane_reactjs.dockerfile
+    ports:
+      - "5173:5173"
+    networks:
+      - redmane-network
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # Routes to frontend container
+      DOMAINS: 'data-registry.wehi-rcp.cloud.edu.au -> http://frontend:5173'
+      # Do not use production until ready because Let's Encrypt has rate limits
+      STAGE: 'production' # local, 'staging', 'production'
+    volumes:
+      - https-portal-data:/var/lib/https-portal
+      - ./data-registry.wehi-rcp.cloud.edu.au.conf.erb:/var/lib/nginx-conf/data-registry.wehi-rcp.cloud.edu.au.ssl.conf.erb:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - redmane-network
+
+volumes:
+  postgres_data:
+  https-portal-data:
+
+networks:
+  redmane-network:
+    driver: bridge
