@@ -1,0 +1,7 @@
+.git
+backups/
+LICENSE
+README.md
+*.bak
+REDMANE_react.js/node_modules
+REDMANE_fastapi/__pycache__

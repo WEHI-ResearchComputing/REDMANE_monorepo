@@ -28,14 +28,13 @@ services:
     networks:
       - redmane-network
 
-  frontend:
+  frontend-build:
     build:
       context: ./ 
       dockerfile: ./redmane_reactjs.dockerfile
-    ports:
-      - "5173:5173"
-    networks:
-      - redmane-network
+    volumes:
+      - frontend-static:/static
+    restart: "no"
 
   https-portal:
     image: steveltn/https-portal:1
@@ -43,22 +42,23 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      # Routes to frontend container
-      DOMAINS: 'data-registry.wehi-rcp.cloud.edu.au -> http://frontend:5173'
+      DOMAINS: 'data-registry.wehi-rcp.cloud.edu.au'
       # Do not use production until ready because Let's Encrypt has rate limits
       STAGE: 'production' # local, 'staging', 'production'
     volumes:
       - https-portal-data:/var/lib/https-portal
       - ./data-registry.wehi-rcp.cloud.edu.au.conf.erb:/var/lib/nginx-conf/data-registry.wehi-rcp.cloud.edu.au.ssl.conf.erb:ro
+      - frontend-static:/var/www/vhosts/data-registry:ro
     depends_on:
       - backend
-      - frontend
+      - frontend-build
     networks:
       - redmane-network
 
 volumes:
   postgres_data:
   https-portal-data:
+  frontend-static:
 
 networks:
   redmane-network:
