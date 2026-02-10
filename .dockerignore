@@ -5,3 +5,4 @@ README.md
 *.bak
 REDMANE_react.js/node_modules
 REDMANE_fastapi/__pycache__
+reset_database.sh
