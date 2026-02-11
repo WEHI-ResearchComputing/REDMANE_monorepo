@@ -154,22 +154,28 @@ docker compose down
 docker compose up --build -d
 ```
 
-### Re-run the database initialisation script
+### Reset the database to default seed data
 
-**Step 1: Backup current database (optional but recommended)**
+There are two methods to reset the database.
+
+**Method 1: Run the reset script (recommended — no downtime for containers)**
 ```bash
-# Creates a timestamped backup file
-docker exec redmane-db pg_dump -U postgres readmedatabase > ~/REDMANE/backups/database_backup_$(date +%Y%m%d_%H%M%S).sql
+bash reset_database.sh
 ```
+This script drops the `public` schema, recreates it, and re-runs the init SQL file, all while keeping the Docker containers running. See `reset_database.sh` for details on what it does.
 
-**Step 2: Reset the database**
+**Method 2: Remove the PostgreSQL volume (nuclear option — requires restarting the stack)**
 ```bash
+# Backup current database first (optional but recommended)
+docker exec redmane-db pg_dump -U postgres readmedatabase > ~/REDMANE/backups/database_backup_$(date +%Y%m%d_%H%M%S).sql
+
 # Stop all containers
 docker compose down
 
-# Remove the postgres volume specifically to trigger initialisation
+# Remove the postgres volume to trigger re-initialisation
 docker volume rm redmane_postgres_data
 
 # Bring everything back up
 docker compose up -d
 ```
+This forces PostgreSQL to re-run the init scripts on startup since the data volume is empty.
