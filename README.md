@@ -60,6 +60,7 @@ REDMANE_Docker/
 - [REDMANE_fastapi](https://github.com/WEHI-RCPStudentInternship/REDMANE_fastapi) - FastAPI backend
 - [REDMANE_react.js](https://github.com/WEHI-RCPStudentInternship/REDMANE_react.js) - React frontend
 - [REDMANE_fastapi_public_data](https://github.com/WEHI-RCPStudentInternship/REDMANE_fastapi_public_data) - Database initialization scripts
+- [REDMANE Metadata File Creation](https://github.com/WEHI-RCPStudentInternship/REDMANE-metadata-generator-with-RO-Crate) - creating file metadata to upload to Data Registry
 
 ## Prerequisites
 
