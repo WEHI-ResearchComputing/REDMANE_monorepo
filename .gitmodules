@@ -1,0 +1,9 @@
+[submodule "REDMANE_fastapi"]
+	path = REDMANE_fastapi
+	url = https://github.com/WEHI-RCPStudentInternship/REDMANE_fastapi
+[submodule "REDMANE_react.js"]
+	path = REDMANE_react.js
+	url = https://github.com/WEHI-RCPStudentInternship/REDMANE_react.js
+[submodule "REDMANE_fastapi_public_data"]
+	path = REDMANE_fastapi_public_data
+	url = https://github.com/WEHI-RCPStudentInternship/REDMANE_fastapi_public_data.git
