@@ -50,8 +50,10 @@ services:
       - ./${PORTAL_CONFIG}:/var/lib/nginx-conf/${PORTAL_CONFIG}:ro
       - frontend-static:/var/www/vhosts/data-registry:ro
     depends_on:
-      - backend
-      - frontend-build
+      backend:
+        condition: service_started
+      frontend-build:
+        condition: service_completed_successfully
     networks:
       - redmane-network
 

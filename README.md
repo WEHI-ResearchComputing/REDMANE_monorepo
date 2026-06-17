@@ -64,7 +64,9 @@ REDMANE_Docker/
 
 ## Prerequisites
 
-- Docker and Docker Compose installed (done)
+- A container runtime. One of:
+  - Docker and Docker Compose installed (done)
+  - Podman and Podman/Docker compose installed
 - Access to the target VM (via SSH, check technical diaries)
 - Domain DNS configured to point to the VM's IP address (done)
 
@@ -80,12 +82,13 @@ It is a ready-to-use docker image that combines the functionality of nginx (reve
 git clone --recurse-submodules git@github.com:WEHI-ResearchComputing/REDMANE_monorepo.git .
 ```
 
-### 2. Start the stack
+### 2. Start the stack (podman)
 ```bash
 cd REDMANE_monorepo
-docker compose up --build -d
+podman compose up --build -d
 ```
 
+Access the running application at: <http://localhost:8000/projects>
 
 
 ## Deployment Steps
