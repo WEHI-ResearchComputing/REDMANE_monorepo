@@ -1,6 +1,6 @@
-# REDMANE Docker Deployment
+# REDMANE Monorepo
 
-This repository contains the Docker orchestration files (docker-compose and dockerfiles) for deploying the REDMANE Data Registry application stack.
+This repository contains everything you need to run the REDMANE Data Registry application stack via Docker.
 
 ## Overview
 
@@ -50,7 +50,7 @@ REDMANE_Docker/
 └── README.md
 ```
 
-**Note:** The following folders are cloned separately and/or excluded via .gitignore:
+**Note:** The following folders are cloned via [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules):
 - `REDMANE_fastapi/` - Backend application (separate repo)
 - `REDMANE_react.js/` - Frontend application (separate repo)
 - `backups/` - VM's backup folder (not currently tracked in any git repo)
@@ -72,37 +72,41 @@ REDMANE_Docker/
 
 It is a ready-to-use docker image that combines the functionality of nginx (reverse proxying, hosting static frontend files, SSL termination) and certbot (automated SSL certificate obtainment and renewal/management). For more context, visit: https://github.com/SteveLTN/https-portal
 
+## Running locally
+
+### 1. Clone the repository and all submodules:
+
+```bash
+git clone --recurse-submodules git@github.com:WEHI-ResearchComputing/REDMANE_monorepo.git
+```
+
+### 2. Start the stack
+```bash
+docker compose up --build -d
+```
+
+
+
 ## Deployment Steps
 
 ### 1. Clone this repository on the REDMANE folder of the Data Registry VM
 ```bash
 cd REDMANE
-git clone https://github.com/WEHI-RCPStudentInternship/REDMANE_Docker.git .
+git clone --recurse-submodules git@github.com:WEHI-ResearchComputing/REDMANE_monorepo.git
 ```
 
-### 2. Clone the application repositories (please change accordingly if newer branches are made)
-```bash
-# Frontend
-git clone -b 13-semester2_2025 https://github.com/WEHI-RCPStudentInternship/REDMANE_react.js.git
+### 2. Configure environment
 
-# Backend
-git clone -b 13-2025-Semester-2 https://github.com/WEHI-RCPStudentInternship/REDMANE_fastapi.git
+Before starting, verify the following in `docker-compose.yaml` and environment files ([.prod.env](./.prod.env)):
 
-# Database initialisation scripts
-git clone -b sem_2_2025 https://github.com/WEHI-RCPStudentInternship/REDMANE_fastapi_public_data.git REDMANE_fastapi/data/REDMANE_fastapi_public_data
-```
-
-### 3. Configure environment
-
-Before starting, verify the following in `docker-compose.yaml`:
 - `STAGE` is set appropriately (`local`, `staging`, or `production`)
   - Do not use 'production' unless the setup has been successfully tested in staging. 'production' will hit the production side of Let's Encrypt and they have rate limits
 - Database credentials match other parts of the backend and database codes
 - Domain name in https-portal container's DOMAINS variable matches your setup
 
-### 4. Start the stack
+### 3. Start the stack (production)
 ```bash
-docker compose up --build -d
+docker compose --env-file .prod.env up --build -d
 ```
 
 The `frontend-build` container will build the React application, copy the static files to a shared volume, and then exit. This is expected — `docker ps -a` will show it as "Exited (0)".
@@ -152,7 +156,7 @@ docker compose logs -f [service_name]
 ### Rebuild after changes
 ```bash
 docker compose down
-docker compose up --build -d
+docker compose --env-file .<env>.env up --build -d
 ```
 
 ### Reset the database to default seed data
@@ -177,6 +181,6 @@ docker compose down
 docker volume rm redmane_postgres_data
 
 # Bring everything back up
-docker compose up -d
+docker compose --env-file .<env>.env up -d
 ```
 This forces PostgreSQL to re-run the init scripts on startup since the data volume is empty.
