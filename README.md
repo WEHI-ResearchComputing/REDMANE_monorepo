@@ -77,11 +77,12 @@ It is a ready-to-use docker image that combines the functionality of nginx (reve
 ### 1. Clone the repository and all submodules:
 
 ```bash
-git clone --recurse-submodules git@github.com:WEHI-ResearchComputing/REDMANE_monorepo.git
+git clone --recurse-submodules git@github.com:WEHI-ResearchComputing/REDMANE_monorepo.git .
 ```
 
 ### 2. Start the stack
 ```bash
+cd REDMANE_monorepo
 docker compose up --build -d
 ```
 
